@@ -1,0 +1,81 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "greeting_service API",
+        "description": "greeting_service требует OAuth 2.0.\n\nМетод **/hello** требует Bearer `access_token` со scope `read:hello`.",
+        "version": "1.0.0"
+    },
+    "host": "localhost:8081",
+    "basePath": "/",
+    "schemes": [
+        "http"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json",
+        "text/plain"
+    ],
+    "securityDefinitions": {
+        "oauth2": {
+            "type": "oauth2",
+            "description": "Auth Service OAuth 2.0",
+            "flow": "accessCode",
+            "authorizationUrl": "http://localhost:8080/oauth2/authorize",
+            "tokenUrl": "http://localhost:8080/oauth2/token",
+            "scopes": {
+                "read": "Access GET /*",
+                "read:hello": "Access GET /hello"
+            }
+        }
+    },
+    "paths": {
+        "/hello": {
+            "get": {
+                "operationId": "hello",
+                "summary": "Say hello to the authenticated user",
+                "description": "Returns a greeting message using the authenticated user's name.",
+                "security": [
+                    {
+                        "oauth2": [
+                            "read:hello"
+                        ]
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/HelloResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized (missing/invalid token)",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "HelloResponse": {
+            "type": "object",
+            "required": [
+                "message"
+            ],
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "Hello Bob!"
+                }
+            }
+        },
+        "ErrorResponse": {
+            "type": "string",
+            "example": "Unauthorized"
+        }
+    }
+}
