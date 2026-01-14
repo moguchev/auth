@@ -1,3 +1,7 @@
+# OpenID Connect
+
+Туториал:
+
 1. Открываем в браузере http://localhost:8080/
 2. Заходим под `admin`
 3. Создаем новый Realm `example`
@@ -19,3 +23,22 @@
       5. `Last name`: `Bob`
       6. Нажимаем `Create`
       7. `Credentials` → устанавливаем пароль (не временный)
+7. Запускаем `auth_service`:
+```sh
+cd auth_service && go run .
+```
+8. Запускаем `greeting_service`:
+```sh
+cd greeting_service && go run .
+```
+9. Переходим на страницу авторизации: http://localhost:3000/login/oidc/authorize
+10. Логинимся под учетной записью `Bob`
+11. Сохраняем `access_token`
+12. Делаем запрос в `greeting_service`:
+```sh
+curl http://localhost:8081/hello -H "Authorization: Bearer <access_token>"
+```
+13. Получаем ответ:
+```json
+{"message":"Hello Bob Bob!"}
+```
